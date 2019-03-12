@@ -101,6 +101,9 @@ class Connection(_mysql.connection):
         :param bool local_infile:
             enables LOAD LOCAL INFILE; zero disables
 
+        :param bool disable_ssl:
+            sets SSL mode to disabled; zero maintains default SSL mode
+
         :param bool autocommit:
             If False (default), autocommit is disabled.
             If True, autocommit is enabled.
@@ -160,6 +163,8 @@ class Connection(_mysql.connection):
 
         # PEP-249 requires autocommit to be initially off
         autocommit = kwargs2.pop('autocommit', False)
+
+        kwargs2.setdefault('disable_ssl', 0)
 
         super(Connection, self).__init__(*args, **kwargs2)
         self.cursorclass = cursorclass
