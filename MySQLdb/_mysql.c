@@ -480,6 +480,14 @@ _mysql_ConnectionObject_Initialize(
 
     if (ssl) {
         mysql_ssl_set(&(self->connection), key, cert, ca, capath, cipher);
+    } else {
+// If this isn't mariadb we'll force tls off
+// Mariadb will automatically disable tls if ssl parameters aren't set
+#ifndef MARIADB_BASE_VERSION
+        /* Force the client to disable SSL connections */
+        unsigned int ssl_mode_disabled = SSL_MODE_DISABLED;
+        mysql_options(&(self->connection), MYSQL_OPT_SSL_MODE, (char *) &ssl_mode_disabled);
+#endif
     }
 
     conn = mysql_real_connect(&(self->connection), host, user, passwd, db,
